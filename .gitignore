@@ -172,3 +172,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# datasets
+dataset/set_1/asl_alphabet_train/
