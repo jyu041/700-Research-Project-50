@@ -23,7 +23,36 @@ import json
 import time
 
 # Set random seeds for reproducibility
-SEED = 42
+SEED = 42 # [0, 1, 42]
+
+# Maximum numer of images to load from each class
+MAX_IMAGES_PER_CLASS = 100 
+
+# Hyper-Parameter tuning
+def get_parameter_grid():
+    """Define the grid of parameters to search."""
+    param_grid = {
+        'batch_size': [16, 32, 64],
+        'epochs': [30, 50],
+        'learning_rate': [0.001, 0.0005, 0.0001],
+        'optimizer': ['adam', 'sgd', 'rmsprop'],
+        'dropout_conv': [0.1, 0.25, 0.4],
+        'dropout_dense': [0.3, 0.5, 0.7],
+        'conv_filters': [(32, 64, 128), (64, 128, 256)],
+        'kernel_size': [3, 5],
+        'dense_units': [256, 512, 1024],
+        'use_batch_norm': [True, False],
+        'patience': [5, 10],
+        'rotation_range': [10, 20],
+        'width_shift_range': [0.1, 0.2],
+        'height_shift_range': [0.1, 0.2],
+        'shear_range': [0.1, 0.2],
+        'zoom_range': [0.1, 0.2],
+        'horizontal_flip': [True]
+    }
+    return param_grid
+
+
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
 random.seed(SEED)
@@ -68,9 +97,9 @@ def load_data(data_dir):
         image_files = os.listdir(class_path)
         print(f"Found {len(image_files)} images in class {class_folder}")
         
-        # Limit number of images per class to 100
-        image_files = image_files[:100]  # Only load a maximum of 100 images per class
-        print(f"Loading {len(image_files)} images (max 100) from class {class_folder}")
+        # Limit number of images per class to X
+        image_files = image_files[:MAX_IMAGES_PER_CLASS]  # Only load a maximum of X images per class
+        print(f"Loading {len(image_files)} images (max {MAX_IMAGES_PER_CLASS}) from class {class_folder}")
         
         for img_file in image_files:
             img_path = os.path.join(class_path, img_file)
@@ -380,28 +409,7 @@ def plot_training_history(history, trial_dir):
     plt.savefig(os.path.join(trial_dir, 'training_history.png'))
     plt.close()
 
-def get_parameter_grid():
-    """Define the grid of parameters to search."""
-    param_grid = {
-        'batch_size': [16, 32, 64],
-        'epochs': [30, 50],
-        'learning_rate': [0.001, 0.0005, 0.0001],
-        'optimizer': ['adam', 'sgd', 'rmsprop'],
-        'dropout_conv': [0.1, 0.25, 0.4],
-        'dropout_dense': [0.3, 0.5, 0.7],
-        'conv_filters': [(32, 64, 128), (64, 128, 256)],
-        'kernel_size': [3, 5],
-        'dense_units': [256, 512, 1024],
-        'use_batch_norm': [True, False],
-        'patience': [5, 10],
-        'rotation_range': [10, 20],
-        'width_shift_range': [0.1, 0.2],
-        'height_shift_range': [0.1, 0.2],
-        'shear_range': [0.1, 0.2],
-        'zoom_range': [0.1, 0.2],
-        'horizontal_flip': [True]
-    }
-    return param_grid
+
 
 def random_param_selection(param_grid, count):
     """
