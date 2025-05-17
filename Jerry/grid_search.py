@@ -20,6 +20,7 @@ import pandas as pd
 import cv2
 import random
 import json
+import time
 
 # Set random seeds for reproducibility
 SEED = 42
@@ -665,8 +666,11 @@ def main():
     print(f"Best model saved to {save_path}")
 
 if __name__ == "__main__":
+    start_time = time.time()
     main()
-    
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Elapsed time: {elapsed_time:.2f} seconds")
     
 # Basic usage (will run 10 random trials by default)
 # python grid_search.py
