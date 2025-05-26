@@ -26,7 +26,7 @@ import time
 SEED = 42 # [0, 1, 42]
 
 # Maximum numer of images to load from each class
-MAX_IMAGES_PER_CLASS = 100 
+MAX_IMAGES_PER_CLASS = 300
 
 # Hyper-Parameter tuning
 def get_parameter_grid():
@@ -35,13 +35,14 @@ def get_parameter_grid():
         'batch_size': [16, 32, 64],
         'epochs': [30, 50],
         'learning_rate': [0.001, 0.0005, 0.0001],
-        'optimizer': ['adam', 'sgd', 'rmsprop'],
+        'optimizer': ['rmsprop'], # 'optimizer': ['adam', 'sgd', 'rmsprop'],
         'dropout_conv': [0.1, 0.25, 0.4],
-        'dropout_dense': [0.3, 0.5, 0.7],
+        'dropout_dense': [0.3, 0.5, 0.7], 
         'conv_filters': [(32, 64, 128), (64, 128, 256)],
         'kernel_size': [3, 5],
         'dense_units': [256, 512, 1024],
-        'use_batch_norm': [True, False],
+        'use_batch_norm': [True], # 'use_batch_norm': [True, False],
+        
         'patience': [5, 10],
         'rotation_range': [10, 20],
         'width_shift_range': [0.1, 0.2],
@@ -242,12 +243,12 @@ def train_model(X_train, y_train, X_val, y_val, params, trial_dir):
     
     # Data augmentation
     datagen = ImageDataGenerator(
-        rotation_range=params.get('rotation_range', 10),
+        # rotation_range=params.get('rotation_range', 10),
         width_shift_range=params.get('width_shift_range', 0.1),
         height_shift_range=params.get('height_shift_range', 0.1),
         shear_range=params.get('shear_range', 0.1),
         zoom_range=params.get('zoom_range', 0.1),
-        horizontal_flip=params.get('horizontal_flip', True),
+        # horizontal_flip=params.get('horizontal_flip', True),
         fill_mode='nearest'
     )
     
