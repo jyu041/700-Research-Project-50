@@ -18,7 +18,9 @@ ASL_LABELS = [
 def parse_arguments():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(description='ASL Sign Interpreter using webcam')
-    parser.add_argument('--model_path', type=str, required=True,
+    # parser.add_argument('--model_path', type=str, required=True,
+    #                    help='Path to the trained model (.h5 file)')
+    parser.add_argument('--model_path', type=str, default='./model.h5',
                        help='Path to the trained model (.h5 file)')
     parser.add_argument('--camera_id', type=int, default=0,
                        help='Camera device ID (default: 0)')

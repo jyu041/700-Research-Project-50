@@ -26,7 +26,7 @@ import time
 SEED = 42 # [0, 1, 42]
 
 # Maximum numer of images to load from each class
-MAX_IMAGES_PER_CLASS = 300
+MAX_IMAGES_PER_CLASS = 500
 
 # Hyper-Parameter tuning
 def get_parameter_grid():
@@ -43,13 +43,13 @@ def get_parameter_grid():
         'dense_units': [256, 512, 1024],
         'use_batch_norm': [True], # 'use_batch_norm': [True, False],
         
-        'patience': [5, 10],
-        'rotation_range': [10, 20],
+        'patience': [10], # 'patience': [5, 10],
+        'rotation_range': [0], # 'rotation_range': [10, 20], 
         'width_shift_range': [0.1, 0.2],
         'height_shift_range': [0.1, 0.2],
         'shear_range': [0.1, 0.2],
         'zoom_range': [0.1, 0.2],
-        'horizontal_flip': [True]
+        'horizontal_flip': [False] # 'horizontal_flip': [True]
     }
     return param_grid
 
