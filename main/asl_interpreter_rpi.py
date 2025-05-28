@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 import argparse
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
-from picamera2 import Picamera2
 import tflite_runtime.interpreter as tflite
 from datetime import datetime
 import os
+import cv2
+from PIL import Image, ImageDraw, ImageFont
+from picamera2 import Picamera2
 
 # Define ASL alphabet labels
 ASL_LABELS = [
@@ -91,7 +92,10 @@ def main():
                 out_img.save(fname)
                 frame_count += 1
             else:
-                out_img.show()
+                cv2.imshow("ASL Interpreter",
+                           cv2.cvtColor(np.array(out_img), cv2.COLOR_RGB2BGR))
+                if cv2.waitKey(1) & 0xFF == 27:   # Esc key quits the loop
+                    break
     except KeyboardInterrupt:
         print("Stopping...")
     finally:
