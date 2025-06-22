@@ -1,4 +1,3 @@
-# asl_interpreter.py
 import os
 import sys
 import cv2
@@ -7,97 +6,42 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 import argparse
 from datetime import datetime
+from ultralytics import YOLO
 
 # Define ASL alphabet labels
 ASL_LABELS = [
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
     'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    'del', 'nothing', 'space'
+    'del', 'space'
 ]
 
 def parse_arguments():
-    """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description='ASL Sign Interpreter using webcam')
-    # parser.add_argument('--model_path', type=str, required=True,
-    #                    help='Path to the trained model (.h5 file)')
+    parser = argparse.ArgumentParser(description='ASL Sign Interpreter using YOLO and webcam')
     parser.add_argument('--model_path', type=str, default='./model.h5',
-                       help='Path to the trained model (.h5 file)')
+                        help='Path to the trained model (.h5 file)')
+    parser.add_argument('--yolo_weights', type=str, default='best_hand.pt',
+                        help='Path to YOLOv8 weights (default: best_hand.pt)')
     parser.add_argument('--camera_id', type=int, default=0,
-                       help='Camera device ID (default: 0)')
+                        help='Camera device ID (default: 0)')
     parser.add_argument('--width', type=int, default=640,
-                       help='Width of the video frame (default: 640)')
+                        help='Width of the video frame (default: 640)')
     parser.add_argument('--height', type=int, default=480,
-                       help='Height of the video frame (default: 480)')
+                        help='Height of the video frame (default: 480)')
     parser.add_argument('--confidence', type=float, default=0.7,
-                       help='Confidence threshold for predictions (default: 0.7)')
+                        help='Confidence threshold for predictions (default: 0.7)')
     parser.add_argument('--record', action='store_true',
-                       help='Record the video with predictions')
-    
+                        help='Record the video with predictions')
     return parser.parse_args()
 
 def load_and_prep_model(model_path):
-    """Load the trained model and prepare it for inference."""
-    print(f"Loading model from {model_path}...")
+    print(f"Loading ASL classification model from {model_path}...")
     model = load_model(model_path)
     model.summary()
-    
-    # Get input shape expected by the model
-    input_shape = model.input_shape[1:3]  # Excluding batch dimension
+    input_shape = model.input_shape[1:3]  # Exclude batch size
     print(f"Model expects input shape: {input_shape}")
-    
     return model, input_shape
 
-def preprocess_frame(frame, target_size):
-    """Preprocess frame for model inference."""
-    # Extract region of interest (center square of the frame)
-    h, w = frame.shape[:2]
-    
-    # Create a square ROI in the center
-    size = min(h, w)
-    x = (w - size) // 2
-    y = (h - size) // 2
-    roi = frame[y:y+size, x:x+size]
-    
-    # Draw the ROI rectangle
-    cv2.rectangle(frame, (x, y), (x+size, y+size), (0, 255, 0), 2)
-    
-    # Preprocess ROI for the model
-    img = cv2.resize(roi, target_size)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Convert to RGB
-    img = img / 255.0  # Normalize to [0,1]
-    
-    return frame, img
-
-def display_prediction(frame, prediction, labels, threshold):
-    """Display prediction on the frame."""
-    predicted_idx = np.argmax(prediction)
-    confidence = prediction[predicted_idx]
-    
-    # Display the predicted label and confidence
-    predicted_label = labels[predicted_idx] if predicted_idx < len(labels) else "Unknown"
-    
-    # If confidence is below threshold, show "Uncertain"
-    if confidence < threshold:
-        label_text = "Uncertain"
-        confidence_color = (0, 0, 255)  # Red for low confidence
-    else:
-        label_text = f"Predicted: {predicted_label}"
-        confidence_color = (0, 255, 0)  # Green for high confidence
-    
-    # Add prediction text to frame
-    cv2.putText(frame, label_text, (10, 30), 
-                cv2.FONT_HERSHEY_SIMPLEX, 1, confidence_color, 2)
-    cv2.putText(frame, f"Confidence: {confidence:.2f}", (10, 70), 
-                cv2.FONT_HERSHEY_SIMPLEX, 0.8, confidence_color, 2)
-    
-    # Add helper text
-    cv2.putText(frame, "Press 'q' to quit", (10, frame.shape[0] - 10), 
-                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
-    
-    return frame
-
 def create_video_writer(width, height, fps=20):
-    """Create a video writer for recording."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_path = f"asl_interpretation_{timestamp}.mp4"
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -105,89 +49,107 @@ def create_video_writer(width, height, fps=20):
     print(f"Recording video to {output_path}")
     return writer
 
+def detect_hand_and_preprocess(frame, yolo_model, target_size):
+    """Use YOLO to detect hand and return cropped+processed image for classification."""
+    results = yolo_model.predict(source=frame, conf=0.3, verbose=False)
+    boxes = results[0].boxes.xyxy.cpu().numpy() if results[0].boxes else []
+
+    if len(boxes) == 0:
+        return frame, None
+
+    # Pick the largest box (assume it's the main hand)
+    largest_box = max(boxes, key=lambda box: (box[2] - box[0]) * (box[3] - box[1]))
+    x1, y1, x2, y2 = map(int, largest_box)
+    x1, y1 = max(x1, 0), max(y1, 0)
+    x2, y2 = min(x2, frame.shape[1]), min(y2, frame.shape[0])
+
+    # Draw detection box
+    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+    # Crop ROI and preprocess
+    roi = frame[y1:y2, x1:x2]
+    if roi.size == 0:
+        return frame, None
+
+    img = cv2.resize(roi, target_size)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
+    img = img / 255.0
+    # img = img[..., np.newaxis]  # Make it (H, W, 1)
+    return frame, img
+
+def display_prediction(frame, prediction, labels, threshold):
+    predicted_idx = np.argmax(prediction)
+    confidence = prediction[predicted_idx]
+    predicted_label = labels[predicted_idx] if predicted_idx < len(labels) else "Unknown"
+
+    if confidence < threshold:
+        label_text = "Uncertain"
+        color = (0, 0, 255)
+    else:
+        label_text = f"Predicted: {predicted_label}"
+        color = (0, 255, 0)
+
+    cv2.putText(frame, label_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+    cv2.putText(frame, f"Confidence: {confidence:.2f}", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+    return frame
+
 def main():
     args = parse_arguments()
-    
-    # Load the model
+
     model, input_shape = load_and_prep_model(args.model_path)
-    
-    # Initialize webcam
+    yolo_model = YOLO(args.yolo_weights)
+
     cap = cv2.VideoCapture(args.camera_id)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.height)
-    
+
     if not cap.isOpened():
         print("Error: Could not open webcam.")
         return
-    
-    print("Webcam initialized. Starting ASL interpretation...")
-    
-    # Set up video recording if requested
-    video_writer = None
-    if args.record:
-        video_writer = create_video_writer(int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), 
-                                          int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
-    
-    # Main loop
+
+    video_writer = create_video_writer(args.width, args.height) if args.record else None
+    print("Webcam initialized. Press 'q' to quit, 's' to save a frame.")
+
     while True:
-        # Capture frame from webcam
         ret, frame = cap.read()
         if not ret:
-            print("Error: Could not read frame from webcam.")
+            print("Error: Failed to read frame.")
             break
-        
-        # Flip the frame horizontally for a more natural view
+
         frame = cv2.flip(frame, 1)
-        
-        # Preprocess the frame
-        display_frame, processed_img = preprocess_frame(frame, (input_shape[0], input_shape[1]))
-        
-        # Make prediction
-        input_tensor = np.expand_dims(processed_img, axis=0)
-        prediction = model.predict(input_tensor, verbose=0)[0]
-        
-        # Display prediction on frame
-        result_frame = display_prediction(display_frame, prediction, ASL_LABELS, args.confidence)
-        
-        # Add help text for controlling the application
-        instructions = [
-            "Controls:",
-            "- Press 'q' to quit",
-            "- Press 's' to save current frame",
-            "- Position your hand in the green box"
-        ]
-        
-        for i, instruction in enumerate(instructions):
-            cv2.putText(result_frame, instruction, (10, result_frame.shape[0] - 100 + i*30), 
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
-        
-        # Show the frame
+        display_frame, processed_img = detect_hand_and_preprocess(frame, yolo_model, input_shape)
+
+        if processed_img is not None:
+            input_tensor = np.expand_dims(processed_img, axis=0)
+            prediction = model.predict(input_tensor, verbose=0)[0]
+            result_frame = display_prediction(display_frame, prediction, ASL_LABELS, args.confidence)
+        else:
+            result_frame = display_frame
+            cv2.putText(result_frame, "No hand detected", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
+        # Show controls
+        cv2.putText(result_frame, "Controls: 'q'=quit, 's'=save", (10, result_frame.shape[0] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
+
         cv2.imshow('ASL Sign Interpreter', result_frame)
-        
-        # Record frame if requested
-        if video_writer is not None:
+
+        if video_writer:
             video_writer.write(result_frame)
-        
-        # Check for key presses
+
         key = cv2.waitKey(1) & 0xFF
-        
-        # 'q' key to quit
         if key == ord('q'):
             break
-            
-        # 's' key to save current frame
         elif key == ord('s'):
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"asl_frame_{timestamp}.jpg"
+            filename = f"asl_frame_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
             cv2.imwrite(filename, result_frame)
             print(f"Saved frame to {filename}")
-    
-    # Release resources
+
     cap.release()
-    if video_writer is not None:
+    if video_writer:
         video_writer.release()
     cv2.destroyAllWindows()
-    print("ASL Sign Interpreter closed.")
+    print("Interpreter closed.")
 
 if __name__ == "__main__":
     main()

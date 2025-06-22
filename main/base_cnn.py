@@ -38,13 +38,13 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='Train CNN model for ASL classification')
     parser.add_argument('--batch_size', type=int, default=32, 
                         help='Batch size for training (default: 32)')
-    parser.add_argument('--epochs', type=int, default=30, 
-                        help='Number of epochs to train (default: 30)')
-    parser.add_argument('--learning_rate', type=float, default=0.001, 
-                        help='Learning rate (default: 0.001)')
-    parser.add_argument('--optimizer', type=str, default='adam', 
+    parser.add_argument('--epochs', type=int, default=50, 
+                        help='Number of epochs to train (default: 50)')
+    parser.add_argument('--learning_rate', type=float, default=0.0001, 
+                        help='Learning rate (default: 0.0001)')
+    parser.add_argument('--optimizer', type=str, default='rmsprop', 
                         choices=['adam', 'sgd', 'rmsprop'], 
-                        help='Optimizer for training (default: adam)')
+                        help='Optimizer for training (default: rmsprop)')
     parser.add_argument('--patience', type=int, default=5, 
                         help='Early stopping patience (default: 5)')
     parser.add_argument('--model_name', type=str, default='ASL_CNN', 
@@ -73,14 +73,13 @@ def load_data(data_dir):
         image_files = os.listdir(class_path)
         print(f"Found {len(image_files)} images in class {class_folder}")
         
-        # Limit number of images per class to 100
-        image_files = image_files[:100]  # Only load a maximum of 100 images per class
-        print(f"Loading {len(image_files)} images (max 100) from class {class_folder}")
+        image_files = random.sample(image_files, min(300, len(image_files)))
         
         for img_file in image_files:
             img_path = os.path.join(class_path, img_file)
             try:
                 img = cv2.imread(img_path)
+                # img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
                 if img is None:
                     print(f"Warning: Could not read image {img_path}")
                     continue
@@ -88,6 +87,7 @@ def load_data(data_dir):
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
                 img = cv2.resize(img, (64, 64))  # Resize to a consistent size
                 img = img / 255.0  # Normalize to [0,1]
+                # img = img[..., np.newaxis]
                 
                 images.append(img)
                 labels.append(class_idx)
@@ -211,6 +211,7 @@ def main():
     print(f"Input shape: {input_shape}, Number of classes: {num_classes}")
     
     model = create_cnn_model(input_shape, num_classes)
+    # model = create_cnn_model((64, 64, 1), num_classes)
     optimizer = get_optimizer(args.optimizer, args.learning_rate)
     
     model.compile(

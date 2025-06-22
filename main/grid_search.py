@@ -26,7 +26,7 @@ import time
 SEED = 42 # [0, 1, 42]
 
 # Maximum numer of images to load from each class
-MAX_IMAGES_PER_CLASS = 500
+MAX_IMAGES_PER_CLASS = 300
 
 # Hyper-Parameter tuning
 def get_parameter_grid():
@@ -554,7 +554,8 @@ def main():
     # Set up paths
     current_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(current_dir)
-    data_dir = os.path.join(project_root, 'dataset', 'set_1', 'asl_alphabet_train')
+    # data_dir = os.path.join(project_root, 'dataset', 'set_1', 'asl_alphabet_train')
+    data_dir = r'C:\Users\Tony\Downloads\asl_300'
     
     # Create output directory
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
