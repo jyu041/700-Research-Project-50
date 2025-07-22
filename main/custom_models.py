@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-MobileNetV2 ASL classifier – memory-friendly, no Albumentations, old-TF safe
-"""
 import os, random, datetime, argparse
 import numpy as np
 import cv2
