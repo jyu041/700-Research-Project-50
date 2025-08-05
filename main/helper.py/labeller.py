@@ -4,7 +4,7 @@ import glob
 import sys
 
 # === Config ===
-image_dir = 'img'
+image_dir = 'img/A'
 output_img_dir = 'labeled_images'
 output_lbl_dir = 'labels_yolo'
 class_id = 0
@@ -16,6 +16,13 @@ image_paths = sorted(
     glob.glob(os.path.join(image_dir, '*.jpg')) +
     glob.glob(os.path.join(image_dir, '*.png'))
 )
+
+def resize_to_fit_screen(img, max_width=1280, max_height=720):
+    ih, iw = img.shape[:2]
+    scale = min(max_width / iw, max_height / ih, 1.0)
+    new_size = (int(iw * scale), int(ih * scale))
+    resized_img = cv2.resize(img, new_size)
+    return resized_img, scale
 
 def save_yolo_bbox(image_shape, bbox, label_path):
     ih, iw = image_shape[:2]
@@ -42,10 +49,15 @@ def label_images():
             continue
 
         while True:
-            # Draw ROI box
-            roi = cv2.selectROI("Draw box and press Enter", img, fromCenter=False, showCrosshair=True)
+            resized_img, scale = resize_to_fit_screen(img)
 
-            if roi == (0, 0, 0, 0):
+            # Draw ROI on resized image
+            cv2.namedWindow("Draw box and press Enter", cv2.WINDOW_NORMAL)
+            cv2.moveWindow("Draw box and press Enter", 200, 100)
+
+            roi_resized = cv2.selectROI("Draw box and press Enter", resized_img, fromCenter=False, showCrosshair=True)
+
+            if roi_resized == (0, 0, 0, 0):
                 print("[!] No ROI selected.")
                 key = input("Press [s] to skip, [q] to quit, any other key to retry: ")
                 if key.lower() == 's':
@@ -55,11 +67,25 @@ def label_images():
                     sys.exit(0)
                 continue
 
-            # Show confirmation window
-            preview = img.copy()
-            x, y, w, h = roi
-            cv2.rectangle(preview, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            cv2.imshow("Confirm (y = save, r = redraw, s = skip, q = quit)", preview)
+            # Scale ROI back to original size
+            x, y, w, h = roi_resized
+            x = int(x / scale)
+            y = int(y / scale)
+            w = int(w / scale)
+            h = int(h / scale)
+            roi = (x, y, w, h)
+
+            # Draw box directly on resized image for preview
+            preview_resized = resized_img.copy()
+            cv2.rectangle(preview_resized, (roi_resized[0], roi_resized[1]),
+                        (roi_resized[0] + roi_resized[2], roi_resized[1] + roi_resized[3]),
+                        (0, 255, 0), 2)
+
+            cv2.namedWindow("Confirm (y = save, r = redraw, s = skip, q = quit)", cv2.WINDOW_NORMAL)
+            cv2.moveWindow("Confirm (y = save, r = redraw, s = skip, q = quit)", 200, 100)
+            cv2.imshow("Confirm (y = save, r = redraw, s = skip, q = quit)", preview_resized)
+
+
 
             key = cv2.waitKey(0) & 0xFF
             cv2.destroyWindow("Confirm (y = save, r = redraw, s = skip, q = quit)")
@@ -79,8 +105,8 @@ def label_images():
                 cv2.destroyAllWindows()
                 sys.exit(0)
 
-    cv2.destroyAllWindows()
-    print("Finished labeling.")
+            cv2.destroyAllWindows()
+            print("Finished labeling.")
 
 if __name__ == "__main__":
     label_images()
