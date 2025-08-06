@@ -4,7 +4,7 @@ import glob
 import sys
 
 # === Config ===
-image_dir = 'img/A'
+image_dir = 'hand'
 output_img_dir = 'labeled_images'
 output_lbl_dir = 'labels_yolo'
 class_id = 0
@@ -21,8 +21,9 @@ def resize_to_fit_screen(img, max_width=1280, max_height=720):
     ih, iw = img.shape[:2]
     scale = min(max_width / iw, max_height / ih, 1.0)
     new_size = (int(iw * scale), int(ih * scale))
-    resized_img = cv2.resize(img, new_size)
+    resized_img = cv2.resize(img, new_size, interpolation=cv2.INTER_AREA)
     return resized_img, scale
+
 
 def save_yolo_bbox(image_shape, bbox, label_path):
     ih, iw = image_shape[:2]
@@ -49,13 +50,16 @@ def label_images():
             continue
 
         while True:
+            # Resize image with preserved ratio
             resized_img, scale = resize_to_fit_screen(img)
 
-            # Draw ROI on resized image
+            # Draw ROI window exactly sized to resized image
             cv2.namedWindow("Draw box and press Enter", cv2.WINDOW_NORMAL)
+            cv2.resizeWindow("Draw box and press Enter", resized_img.shape[1], resized_img.shape[0])
             cv2.moveWindow("Draw box and press Enter", 200, 100)
 
             roi_resized = cv2.selectROI("Draw box and press Enter", resized_img, fromCenter=False, showCrosshair=True)
+
 
             if roi_resized == (0, 0, 0, 0):
                 print("[!] No ROI selected.")
@@ -75,15 +79,19 @@ def label_images():
             h = int(h / scale)
             roi = (x, y, w, h)
 
-            # Draw box directly on resized image for preview
+            # Draw green rectangle on resized image
             preview_resized = resized_img.copy()
             cv2.rectangle(preview_resized, (roi_resized[0], roi_resized[1]),
                         (roi_resized[0] + roi_resized[2], roi_resized[1] + roi_resized[3]),
                         (0, 255, 0), 2)
 
+            # Show confirmation window
             cv2.namedWindow("Confirm (y = save, r = redraw, s = skip, q = quit)", cv2.WINDOW_NORMAL)
+            cv2.resizeWindow("Confirm (y = save, r = redraw, s = skip, q = quit)",
+                            preview_resized.shape[1], preview_resized.shape[0])
             cv2.moveWindow("Confirm (y = save, r = redraw, s = skip, q = quit)", 200, 100)
             cv2.imshow("Confirm (y = save, r = redraw, s = skip, q = quit)", preview_resized)
+
 
 
 
