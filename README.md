@@ -15,3 +15,19 @@ In this project, we will develop and evaluate a system designed to recognise as 
 
 ## Datasets
 [Here](./Datasets.md) shows a list of datasets that we can choose to use.
+
+## .pt to .tflite
+```bash
+pip install ultralytics onnx onnx-tf
+pip install tensorflow==2.14.0
+pip install tensorflow-probability==0.22.0
+pip install numpy==1.24.4
+```
+
+```bash
+yolo export model=best_hand.pt format=onnx opset=12 dynamic=False
+```
+
+```bash
+onnx-tf convert -i best_hand.onnx -o best_hand_tf
+```
