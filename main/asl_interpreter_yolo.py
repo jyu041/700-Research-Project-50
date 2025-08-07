@@ -7,7 +7,7 @@ from ultralytics import YOLO
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='YOLO-only ASL Sign Interpreter using webcam')
-    parser.add_argument('--model_path', type=str, default='best_group.pt',
+    parser.add_argument('--model_path', type=str, default='best.pt',
                         help='Path to YOLOv8 model (.pt)')
     parser.add_argument('--camera_id', type=int, default=0,
                         help='Webcam device ID')

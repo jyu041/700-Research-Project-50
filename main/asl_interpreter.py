@@ -20,7 +20,7 @@ LOG_PATH  = os.path.join(SAVE_ROOT, "log.csv")
 # ----------------------- helper functions -------------------------
 def parse_arguments():
     p = argparse.ArgumentParser(description='ASL Sign Interpreter using YOLO and webcam')
-    p.add_argument('--model_path',  type=str, default='./model.h5')
+    p.add_argument('--model_path',  type=str, default='./model_v2.h5')
     p.add_argument('--yolo_weights',type=str, default='best_hand.pt')
     p.add_argument('--camera_id',   type=int, default=0)
     p.add_argument('--width',       type=int, default=640)
