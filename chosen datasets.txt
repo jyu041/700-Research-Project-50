@@ -1,0 +1,6 @@
+[ASL Alphabet] https://www.kaggle.com/datasets/grassknoted/asl-alphabet
+
+https://facundoq.github.io/guides/sign_language_datasets/slr
+https://github.com/Bluebie/NZSL-Dictionary
+https://www.kaggle.com/datasets/risangbaskoro/wlasl-processed/data?select=videos
+https://www.bu.edu/asllrp/av/dai-asllvd.html
