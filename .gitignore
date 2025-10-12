@@ -11,6 +11,8 @@ grid_search_results/
 yolo_models/
 labelled/
 asl_sampled/
+test_img/
+test_vid/
 
 
 # Byte-compiled / optimized / DLL files

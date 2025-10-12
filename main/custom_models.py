@@ -34,7 +34,7 @@ def cli():
     p.add_argument("--img_cap",     type=int,   default=1000, help="max images / class")
     p.add_argument("--model_name",  default="MobileNetASL")
     p.add_argument("--data_root",
-        default=r"C:\Users\Tony\Downloads\700-Research-Project-50\dataset\asl_sampled",
+        default=r"C:\Users\Tony\Downloads\compsys700\700-Research-Project-50\dataset\all",
         help="root folder with class sub-dirs")
     return p.parse_args()
 
