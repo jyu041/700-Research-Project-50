@@ -14,6 +14,9 @@ asl_sampled/
 test_img/
 test_vid/
 
+capture_B/
+capture_C/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
