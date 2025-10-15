@@ -1,0 +1,4 @@
+name: dyn-gpu
+channels:
+  - defaults
+prefix: C:\Users\Jerry\miniconda3\envs\dyn-gpu

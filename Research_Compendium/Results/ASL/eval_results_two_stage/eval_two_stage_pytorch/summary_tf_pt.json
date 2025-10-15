@@ -1,0 +1,86 @@
+{
+  "pipeline": "yolo_v8_pt_detector + keras_h5_classifier",
+  "yolo_weights": "../models/best_hand.pt",
+  "classifier_h5": "../models/model.h5",
+  "data_dir": "../test_img",
+  "num_classes": 28,
+  "num_images": 1904,
+  "overall_accuracy": 0.8445378151260504,
+  "per_class_accuracy": [
+    0.9558823529411765, A
+    0.9705882352941176, B
+    0.8529411764705882, C
+    0.7352941176470589, D
+    0.9558823529411765, E
+    0.9264705882352942, F
+    0.8676470588235294, G
+    0.7647058823529411, H
+    0.8970588235294118, I
+    0.8382352941176471, J
+    0.9852941176470589, K
+    0.6911764705882353, L
+    0.9411764705882353, M
+    0.7058823529411765, N
+    0.7352941176470589, O
+    0.9852941176470589, P
+    0.7058823529411765, Q
+    0.75,               R
+    0.7941176470588235, S
+    0.6029411764705882, T
+    0.8823529411764706, U
+    0.9117647058823529, V
+    0.9705882352941176, W
+    0.7647058823529411, X
+    0.9117647058823529, Y
+    0.7794117647058824, Z
+    0.7941176470588235, DEL
+    0.9705882352941176  space
+  ],
+  "classes": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
+    "del",
+    "space"
+  ],
+  "cm_csv": "eval_results_yolo_pt_h5/eval_yolo_pt_h5_20251006_224128/confusion_matrix.csv",
+  "predictions_csv": "eval_results_yolo_pt_h5/eval_yolo_pt_h5_20251006_224128/predictions.csv",
+  "wall_time_sec": 515.3615435610009,
+  "avg_inference_ms_per_batch": 8524.525798016837,
+  "avg_inference_ms_per_image": 268.5572846000051,
+  "avg_cpu_percent": 46.11166666666667,
+  "avg_ram_percent": 8.72,
+  "detected_images": 1806,
+  "no_usable_box_small": 0,
+  "fallback_full_image": 98,
+  "detection_rate": 0.9485294117647058,
+  "fallback_rate": 0.051470588235294115,
+  "det_conf_thres": 0.3,
+  "yolo_imgsz": 416,
+  "crop_pad": 1.25,
+  "min_box_size": 10,
+  "device": "auto"
+}

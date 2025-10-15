@@ -1,0 +1,8 @@
+3.2.1 Workstation A
+Workstation A comprised a Windows PC equipped with an RTX 3060 GPU with 12 GB of
+VRAM, and 16 GB of RAM, powered by an Intel i5 11th-generation CPU.
+3.2.2 Workstation B
+Workstation B consisted of a Windows system featuring an RTX 3070 GPU with 8 GB of
+VRAM, and 16 GB of RAM supported by an AMD Ryzen 7 5800X processor.
+3.2.4 Raspberry Pi 5
+16GB Ram, Arm Cortex A76 processor @ 2.4GHz, with external Logitech C922 camera.

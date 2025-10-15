@@ -1,0 +1,85 @@
+{
+  "pipeline": "yolo_tflite_detector + tflite_classifier",
+  "detector_tflite": "../models/v5n_100epoch_img416.tflite",
+  "classifier_tflite": "../models/model.tflite",
+  "data_dir": "../test_img",
+  "num_classes": 28,
+  "num_images": 1904,
+  "overall_accuracy": 0.8581932773109243,
+  "per_class_accuracy": [
+    0.9705882352941176,  A
+    0.9705882352941176,  B
+    0.8823529411764706,  C
+    0.7941176470588235,  D
+    0.9705882352941176,  E
+    0.9558823529411765,  F
+    0.8529411764705882,  G
+    0.7352941176470589,  H
+    0.8823529411764706,  I
+    0.8823529411764706,  J
+    0.9852941176470589,  K
+    0.8088235294117647,  L
+    0.9852941176470589,  M
+    0.7205882352941176,  N
+    0.7352941176470589,  O
+    0.9852941176470589,  P
+    0.7205882352941176,  Q
+    0.8235294117647058,  R
+    0.8088235294117647,  S
+    0.7205882352941176,  T
+    0.8823529411764706,  U
+    0.8529411764705882,  V
+    0.9264705882352942,  W
+    0.75,                X
+    0.9705882352941176,  Y
+    0.7352941176470589,  Z
+    0.7205882352941176,  del
+    1.0                  space
+  ],
+  "classes": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
+    "del",
+    "space"
+  ],
+  "cm_csv": "eval_results_yolo_crop/eval_yolo_crop_20251006_225348/confusion_matrix.csv",
+  "predictions_csv": "eval_results_yolo_crop/eval_yolo_crop_20251006_225348/predictions.csv",
+  "wall_time_sec": 94.85563588800142,
+  "avg_inference_ms_per_batch": 1515.8900575333366,
+  "avg_inference_ms_per_image": 47.76506246145876,
+  "avg_cpu_percent": 69.91166666666666,
+  "avg_ram_percent": 4.869999999999999,
+  "detected_images": 1580,
+  "no_usable_box_small": 0,
+  "fallback_full_image": 324,
+  "detection_rate": 0.8298319327731093,
+  "fallback_rate": 0.17016806722689076,
+  "det_conf_thres": 0.3,
+  "det_iou_thres": 0.45,
+  "crop_pad": 1.25,
+  "min_box_size": 10
+}

@@ -1,0 +1,7 @@
+Tony:
+Fix dataset for ASL+BSL such that all ASL matches the description of report.
+Fix dataset for YOLO_hand_only_ASL+BSL retarded me accidentally deleted the fucking dataset. All first 10 BSL signs are cropped and split 6/2/2 to train/test/valid
+
+Jerry:
+Add in training methods for dynamic. Folder: Code go to help.txt find "Jerry add your stuff here for LSA64 and WLASL"
+Also give me some ideas on what to add for project_details

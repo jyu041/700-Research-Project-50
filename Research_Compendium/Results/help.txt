@@ -1,0 +1,11 @@
+ASL contains only ASL signs and evaluation.
+eval_results_CNN contains evaluation from only MobileNetV2 classifier
+eval_results_two_stage contains evaluation from YOLO + MobileNetV2
+eval_tf contains is tensorflow model and pytorch (MobileNetV2 and YOLO) respectively
+eval_tflite contains tensorflow lite converted YOLO and MobileNetV2
+
+ASL+BSL follows the same structure as ASL
+
+LSA64 contains evaluation result for dynamic hand signs
+eval_pytorch contains the model evaluation as the pytorch model
+eval_tflite contains the model evaluation as converted tflite model
