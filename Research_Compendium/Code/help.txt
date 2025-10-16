@@ -49,7 +49,9 @@ MobileNetV2 contains the training code for MobileNetV2. Ensure --data_root is po
 
 YOLOv8n training is done by installing Ultralytics and calling "yolo task=detect mode=train model=yolov8n.pt data=dataset/data.yaml epochs=100 imgsz=416 device=0" Ensure dataset is pointing to the right path
 
-Jerry add your stuff here for LSA64 and WLASL
+LSA64 directory contains the training code for LSA64. Ensure "CUT_DIR" is pointing to the training data, and ensure a "models" folder is created in the same directory to save the trained model. Run the train.py script.
+
+WLASL directory contains a python notebook which trains the LSTM model on the WLASL dataset. Ensure the dataset is downloaded and the path is set correctly in the notebook. Run all notebook cells in order.
 
 utils:
 down_sample.py
