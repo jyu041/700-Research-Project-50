@@ -1,3 +1,0 @@
-Workstation_A.yml can be used to recreate the software environment from Anaconda for Workstation A. "conda env create -f Workstation_A.yml"
-
-Workstation_B.yml can be used to recreate the software environment from Anaconda for Workstation B. "conda env create -f Workstation_B.yml"
