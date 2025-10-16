@@ -18,6 +18,29 @@ In this project, we developed and evaluated a system designed to recognise as ma
 
 ---
 
+## Datasets
+
+### Dataset Structure
+
+- **ASL**: Dataset used to train ASL-only models
+- **ASL+BSL**: Dataset used to train combined ASL+BSL models
+- **BSL**: Separate folder that can be used to train a BSL-only model
+- **YOLO_classify**: Failed attempt of YOLO tracking and classification dataset
+- **YOLO_hand_only**: Dataset used for training ASL hand tracking
+- **YOLO_hand_only_ASL+BSL**: Dataset used for training ASL+BSL hand tracking
+- **test**: Images used for testing model accuracy
+
+### Full Dataset Downloads
+
+**Note**: Datasets are too large for this compendium. Full datasets can be downloaded from the following sources:
+
+- **Full ASL**: [Kaggle - ASL Alphabet](https://www.kaggle.com/datasets/grassknoted/asl-alphabet)
+- **Full BSL**: [Kaggle - BSL Static Alphabet](https://www.kaggle.com/datasets/philipilono/bsl-static-alphabet)
+- **WLASL**: [Kaggle - WLASL Processed](https://www.kaggle.com/datasets/risangbaskoro/wlasl-processed/data?select=videos)
+- **LSA64**: [Official LSA64 Dataset](https://facundoq.github.io/datasets/lsa64/)
+
+---
+
 ## Environment Setup
 
 ### Workstation A
