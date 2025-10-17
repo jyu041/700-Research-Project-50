@@ -18,6 +18,20 @@ In this project, we developed and evaluated a system designed to recognise as ma
 
 ---
 
+## Project Story & Documentation
+
+To provide a clear view of how our project evolved, we included the following supporting documents in the `Story/` folder:
+
+- **ExpectedTimeFrames.pdf** – Contains the expected timelines we initially set for ourselves, outlining planned milestones and deliverables.
+- **RealTimeFrames.pdf** – Records the actual timeline we followed, highlighting deviations from our original plan.
+- **TimeFramesComparison.pdf** – A short comparative report between our expected and real timelines, offering insight into project management challenges and adjustments.
+- **MeetingLogs.pdf** – Includes brief summaries of meeting sessions and notes, showing our decision-making process throughout the project.
+- **OriginalTimeLine.png** – A Gantt chart image of our original expected timeline for quick visual reference.
+
+These documents help track the evolution of our project, comparing expectations with reality, and providing transparency in how we collaborated and managed progress.
+
+---
+
 ## Datasets
 
 ### Dataset Structure
